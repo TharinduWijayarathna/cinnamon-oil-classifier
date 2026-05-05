@@ -8,7 +8,9 @@ type PredictionResponse = {
   classification_type: "binary" | "multiclass";
 };
 
-const DEFAULT_API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
+const DEFAULT_API_BASE =
+  import.meta.env.VITE_API_BASE_URL ??
+  `${window.location.protocol}//${window.location.hostname}:8000`;
 
 export default function App() {
   const [apiBase, setApiBase] = useState(DEFAULT_API_BASE);
@@ -60,7 +62,11 @@ export default function App() {
       setResult(data as PredictionResponse);
     } catch (submitError) {
       const message =
-        submitError instanceof Error ? submitError.message : "Unexpected request error.";
+        submitError instanceof TypeError
+          ? `Failed to reach API at ${apiBase}. Make sure backend is running and URL/port are correct.`
+          : submitError instanceof Error
+            ? submitError.message
+            : "Unexpected request error.";
       setError(message);
     } finally {
       setLoading(false);
