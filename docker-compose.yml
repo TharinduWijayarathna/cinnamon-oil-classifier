@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cinnamon-backend
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  ui:
+    build:
+      context: .
+      dockerfile: ui/Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    container_name: cinnamon-ui
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+    restart: unless-stopped

@@ -1,2 +1,29 @@
 .env
 .venv
+
+# OS / editor noise
+.DS_Store
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# Local runtime / logs
+*.log
+tmp/
+temp/
+
+# Frontend (Vite/React)
+ui/node_modules/
+ui/dist/
+ui/.vite/
+*.tsbuildinfo

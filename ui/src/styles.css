@@ -1,0 +1,88 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+h1 {
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  margin-top: 0;
+  color: #4f5e7a;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e4e9f3;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+form.card {
+  display: grid;
+  gap: 0.75rem;
+}
+
+label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+input {
+  border: 1px solid #c9d2e6;
+  border-radius: 8px;
+  padding: 0.62rem 0.7rem;
+  font-size: 0.95rem;
+}
+
+button {
+  margin-top: 0.5rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.75rem 0.95rem;
+  background: #2253ff;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #8da4ff;
+  cursor: wait;
+}
+
+.file-name {
+  margin: 0;
+  color: #4f5e7a;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #9f1c1c;
+  border-color: #efc1c1;
+  background: #fff6f6;
+}
+
+.result pre {
+  background: #101a2d;
+  color: #cce0ff;
+  border-radius: 8px;
+  padding: 0.8rem;
+  overflow-x: auto;
+}
