@@ -1,0 +1,31 @@
+{
+    "problem_type": "classification",
+    "target_column": "quality_category",
+    "image_column": "image_name",
+    "numerical_features": [
+        "oil_mass",
+        "density",
+        "ph_value"
+    ],
+    "categorical_features": [
+        "oil_type"
+    ],
+    "best_overall_model": "CatBoost",
+    "best_tabular_model": {
+        "name": "CatBoost",
+        "path": "/content/final_export/best_tabular_model.pkl"
+    },
+    "best_image_model": {
+        "name": "Image Model",
+        "path": "/content/final_export/best_image_model.keras"
+    },
+    "best_hybrid_model": {
+        "name": "Hybrid Model",
+        "path": "/content/final_export/best_hybrid_model.keras"
+    },
+    "label_encoder": "/content/final_export/label_encoder.pkl",
+    "tabular_preprocessor": "/content/final_export/tabular_preprocessor.pkl",
+    "hybrid_tabular_preprocessor": "/content/final_export/hybrid_tabular_preprocessor.pkl",
+    "model_comparison": "/content/final_export/model_comparison.csv",
+    "image_supported_package": "/content/final_export/image_supported_package.pkl"
+}
