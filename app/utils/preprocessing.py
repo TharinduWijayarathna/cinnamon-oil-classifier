@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-import pandas as pd
 from PIL import Image
 
 
@@ -12,19 +11,19 @@ def preprocess_image(image_path: str, target_size: tuple[int, int]) -> np.ndarra
     return np.expand_dims(img_array, axis=0)
 
 
-def build_tabular_dataframe(density: str, ph_value: str) -> pd.DataFrame:
-    return pd.DataFrame(
-        [
-            {
-                "density": float(density),
-                "ph_value": float(ph_value),
-            }
-        ]
-    )
+def preprocess_tabular(
+    density: float,
+    ph_value: float,
+    preprocessing: dict,
+) -> np.ndarray:
+    impute_values = preprocessing["impute_values"]
+    scale_mean = np.asarray(preprocessing["scale_mean"], dtype=np.float32)
+    scale_std = np.asarray(preprocessing["scale_std"], dtype=np.float32)
 
+    values = np.array([density, ph_value], dtype=np.float32)
+    for i, value in enumerate(values):
+        if np.isnan(value):
+            values[i] = impute_values[i]
 
-def preprocess_tabular_input(preprocessor, tabular_df: pd.DataFrame) -> np.ndarray:
-    transformed = preprocessor.transform(tabular_df)
-    if hasattr(transformed, "toarray"):
-        transformed = transformed.toarray()
-    return np.asarray(transformed, dtype=np.float32)
+    scaled = (values - scale_mean) / scale_std
+    return np.expand_dims(scaled, axis=0)

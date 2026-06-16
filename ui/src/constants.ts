@@ -3,13 +3,13 @@ export const API_BASE =
   `${window.location.protocol}//${window.location.hostname}:8000`;
 
 export const CLASS_LABELS = [
-  "bark_superior",
-  "bark_special",
+  "adulterated",
   "bark_average",
   "bark_ordinary",
-  "leaf_pass",
+  "bark_special",
+  "bark_superior",
   "leaf_fail",
-  "adulterated",
+  "leaf_pass",
 ] as const;
 
 export type QualityTier = "green" | "amber" | "red";

@@ -6,8 +6,6 @@ class Config:
     MODELS_DIR = BASE_DIR / "models"
 
     HYBRID_MODEL_FILENAME = "best_hybrid_model.keras"
-    PREPROCESSOR_FILENAME = "hybrid_tabular_preprocessor.pkl"
-    LABEL_ENCODER_FILENAME = "label_encoder.pkl"
-    SUMMARY_FILENAME = "model_summary.json"
+    MODEL_CONFIG_FILENAME = "model_config.json"
 
     IMAGE_SIZE = (224, 224)

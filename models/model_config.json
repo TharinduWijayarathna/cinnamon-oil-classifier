@@ -1,0 +1,20 @@
+{
+  "model_type": "hybrid",
+  "target_column": "result",
+  "numerical_features": ["density", "ph_value"],
+  "class_names": [
+    "adulterated",
+    "bark_average",
+    "bark_ordinary",
+    "bark_special",
+    "bark_superior",
+    "leaf_fail",
+    "leaf_pass"
+  ],
+  "tabular_preprocessing": {
+    "impute_strategy": "median",
+    "impute_values": [1.024, 5.095],
+    "scale_mean": [1.0236089285714285, 5.0475714285714295],
+    "scale_std": [0.011640397280679083, 0.2754966202244631]
+  }
+}

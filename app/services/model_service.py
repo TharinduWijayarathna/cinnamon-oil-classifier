@@ -6,16 +6,11 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-import joblib
 import numpy as np
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import load_model
 
-from app.utils.preprocessing import (
-    build_tabular_dataframe,
-    preprocess_image,
-    preprocess_tabular_input,
-)
+from app.utils.preprocessing import preprocess_image, preprocess_tabular
 
 
 class ModelService:
@@ -23,34 +18,29 @@ class ModelService:
         self,
         models_dir: Path,
         hybrid_model_filename: str,
-        preprocessor_filename: str,
-        label_encoder_filename: str,
-        summary_filename: str,
+        model_config_filename: str,
     ) -> None:
         self.models_dir = Path(models_dir)
         self.hybrid_model_path = self.models_dir / hybrid_model_filename
-        self.preprocessor_path = self.models_dir / preprocessor_filename
-        self.label_encoder_path = self.models_dir / label_encoder_filename
-        self.summary_path = self.models_dir / summary_filename
+        self.model_config_path = self.models_dir / model_config_filename
 
         self.hybrid_model = None
-        self.hybrid_preprocessor = None
-        self.label_encoder = None
-        self.model_summary = {}
+        self.model_config: dict = {}
         self._load_all()
 
     def _load_all(self) -> None:
         self._ensure_file(self.hybrid_model_path)
-        self._ensure_file(self.preprocessor_path)
-        self._ensure_file(self.label_encoder_path)
-        self._ensure_file(self.summary_path)
+        self._ensure_file(self.model_config_path)
 
         self.hybrid_model = self._load_hybrid_model_with_compat()
-        self.hybrid_preprocessor = joblib.load(self.preprocessor_path)
-        self.label_encoder = joblib.load(self.label_encoder_path)
 
-        with self.summary_path.open("r", encoding="utf-8") as f:
-            self.model_summary = json.load(f)
+        with self.model_config_path.open("r", encoding="utf-8") as f:
+            self.model_config = json.load(f)
+
+        required_keys = ["class_names", "tabular_preprocessing"]
+        missing = [key for key in required_keys if key not in self.model_config]
+        if missing:
+            raise ValueError(f"model_config.json is missing required keys: {missing}")
 
     @staticmethod
     def _ensure_file(path: Path) -> None:
@@ -118,23 +108,17 @@ class ModelService:
     def metadata(self) -> dict:
         return {
             "status": "ok",
-            "model_type": "hybrid",
-            "best_hybrid_model": self.model_summary.get("best_hybrid_model", {}),
+            "model_type": self.model_config.get("model_type", "hybrid"),
+            "class_names": self.model_config.get("class_names", []),
             "required_fields": ["density", "ph_value", "image"],
         }
 
     def health(self) -> dict:
-        loaded = all(
-            [
-                self.hybrid_model is not None,
-                self.hybrid_preprocessor is not None,
-                self.label_encoder is not None,
-            ]
-        )
+        loaded = self.hybrid_model is not None and bool(self.model_config)
         return {
             "status": "healthy" if loaded else "unhealthy",
             "models_loaded": loaded,
-            "model_type": "hybrid",
+            "model_type": self.model_config.get("model_type", "hybrid"),
         }
 
     def predict(
@@ -145,9 +129,11 @@ class ModelService:
         image_size: tuple[int, int],
     ) -> dict:
         image_input = preprocess_image(image_path=image_path, target_size=image_size)
-
-        tabular_df = build_tabular_dataframe(density=density, ph_value=ph_value)
-        tabular_input = preprocess_tabular_input(self.hybrid_preprocessor, tabular_df)
+        tabular_input = preprocess_tabular(
+            density=float(density),
+            ph_value=float(ph_value),
+            preprocessing=self.model_config["tabular_preprocessing"],
+        )
 
         prediction = self.hybrid_model.predict([image_input, tabular_input], verbose=0)
         prediction = np.asarray(prediction)
@@ -168,7 +154,11 @@ class ModelService:
             predicted_class = int(np.argmax(prediction[0]))
             confidence = float(np.max(prediction[0]))
 
-        predicted_label = self.label_encoder.inverse_transform([predicted_class])[0]
+        class_names = self.model_config["class_names"]
+        if predicted_class < 0 or predicted_class >= len(class_names):
+            raise ValueError(f"Predicted class index {predicted_class} is out of range.")
+
+        predicted_label = class_names[predicted_class]
 
         return {
             "prediction": str(predicted_label),

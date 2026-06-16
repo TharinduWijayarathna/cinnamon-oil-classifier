@@ -14,9 +14,7 @@ def create_app() -> Flask:
     model_service = ModelService(
         models_dir=app.config["MODELS_DIR"],
         hybrid_model_filename=app.config["HYBRID_MODEL_FILENAME"],
-        preprocessor_filename=app.config["PREPROCESSOR_FILENAME"],
-        label_encoder_filename=app.config["LABEL_ENCODER_FILENAME"],
-        summary_filename=app.config["SUMMARY_FILENAME"],
+        model_config_filename=app.config["MODEL_CONFIG_FILENAME"],
     )
     app.extensions["model_service"] = model_service
 
