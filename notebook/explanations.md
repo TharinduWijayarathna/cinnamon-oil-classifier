@@ -440,4 +440,4 @@ A quality control officer at a cinnamon oil facility measures the density and pH
 
 ---
 
-*Document prepared for the Cinnamon Oil Classification Project — StackXis*
+*Document prepared for the Cinnamon Oil Classification Project — Tharindu Wijayarathna*
