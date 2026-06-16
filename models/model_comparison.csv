@@ -1,6 +1,0 @@
-model,accuracy,f1
-RandomForest,1.0,1.0
-XGBoost,1.0,1.0
-CatBoost,1.0,1.0
-Hybrid Model,0.9714285714285714,0.9713028867878557
-Image Model,0.14285714285714285,0.03571428571428571

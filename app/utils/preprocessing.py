@@ -12,16 +12,12 @@ def preprocess_image(image_path: str, target_size: tuple[int, int]) -> np.ndarra
     return np.expand_dims(img_array, axis=0)
 
 
-def build_tabular_dataframe(
-    oil_mass: str, density: str, ph_value: str, oil_type: str
-) -> pd.DataFrame:
+def build_tabular_dataframe(density: str, ph_value: str) -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
-                "oil_mass": float(oil_mass),
                 "density": float(density),
                 "ph_value": float(ph_value),
-                "oil_type": str(oil_type),
             }
         ]
     )

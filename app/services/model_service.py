@@ -120,7 +120,7 @@ class ModelService:
             "status": "ok",
             "model_type": "hybrid",
             "best_hybrid_model": self.model_summary.get("best_hybrid_model", {}),
-            "required_fields": ["oil_mass", "density", "ph_value", "oil_type", "image"],
+            "required_fields": ["density", "ph_value", "image"],
         }
 
     def health(self) -> dict:
@@ -140,17 +140,13 @@ class ModelService:
     def predict(
         self,
         image_path: str,
-        oil_mass: str,
         density: str,
         ph_value: str,
-        oil_type: str,
         image_size: tuple[int, int],
     ) -> dict:
         image_input = preprocess_image(image_path=image_path, target_size=image_size)
 
-        tabular_df = build_tabular_dataframe(
-            oil_mass=oil_mass, density=density, ph_value=ph_value, oil_type=oil_type
-        )
+        tabular_df = build_tabular_dataframe(density=density, ph_value=ph_value)
         tabular_input = preprocess_tabular_input(self.hybrid_preprocessor, tabular_df)
 
         prediction = self.hybrid_model.predict([image_input, tabular_input], verbose=0)

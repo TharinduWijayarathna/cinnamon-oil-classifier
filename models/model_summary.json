@@ -1,5 +1,6 @@
 {
     "problem_type": "classification",
+    "model_type": "hybrid",
     "target_column": "result",
     "image_column": "image_name",
     "numerical_features": [
@@ -15,21 +16,10 @@
         "leaf_fail",
         "adulterated"
     ],
-    "best_overall_model": "RandomForest",
-    "best_tabular_model": {
-        "name": "RandomForest",
-        "path": "/content/final_export/best_tabular_model.pkl"
-    },
-    "best_image_model": {
-        "name": "Image Model",
-        "path": "/content/final_export/best_image_model.keras"
-    },
     "best_hybrid_model": {
         "name": "Hybrid Model",
-        "path": "/content/final_export/best_hybrid_model.keras"
+        "path": "best_hybrid_model.keras"
     },
-    "label_encoder": "/content/final_export/label_encoder.pkl",
-    "tabular_preprocessor": "/content/final_export/tabular_preprocessor.pkl",
-    "hybrid_tabular_preprocessor": "/content/final_export/hybrid_tabular_preprocessor.pkl",
-    "model_comparison": "/content/final_export/model_comparison.csv"
+    "label_encoder": "label_encoder.pkl",
+    "hybrid_tabular_preprocessor": "hybrid_tabular_preprocessor.pkl"
 }

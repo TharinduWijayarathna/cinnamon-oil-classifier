@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 
 api_bp = Blueprint("api", __name__)
 
-REQUIRED_FORM_FIELDS = ["oil_mass", "density", "ph_value", "oil_type"]
+REQUIRED_FORM_FIELDS = ["density", "ph_value"]
 
 
 @api_bp.get("/")
@@ -61,10 +61,8 @@ def predict():
 
         result = model_service.predict(
             image_path=temp_file_path,
-            oil_mass=request.form["oil_mass"],
             density=request.form["density"],
             ph_value=request.form["ph_value"],
-            oil_type=request.form["oil_type"],
             image_size=current_app.config["IMAGE_SIZE"],
         )
 
