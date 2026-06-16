@@ -1,18 +1,23 @@
 {
     "problem_type": "classification",
-    "target_column": "quality_category",
+    "target_column": "result",
     "image_column": "image_name",
     "numerical_features": [
-        "oil_mass",
         "density",
         "ph_value"
     ],
-    "categorical_features": [
-        "oil_type"
+    "class_names": [
+        "bark_superior",
+        "bark_special",
+        "bark_average",
+        "bark_ordinary",
+        "leaf_pass",
+        "leaf_fail",
+        "adulterated"
     ],
-    "best_overall_model": "CatBoost",
+    "best_overall_model": "RandomForest",
     "best_tabular_model": {
-        "name": "CatBoost",
+        "name": "RandomForest",
         "path": "/content/final_export/best_tabular_model.pkl"
     },
     "best_image_model": {
@@ -26,6 +31,5 @@
     "label_encoder": "/content/final_export/label_encoder.pkl",
     "tabular_preprocessor": "/content/final_export/tabular_preprocessor.pkl",
     "hybrid_tabular_preprocessor": "/content/final_export/hybrid_tabular_preprocessor.pkl",
-    "model_comparison": "/content/final_export/model_comparison.csv",
-    "image_supported_package": "/content/final_export/image_supported_package.pkl"
+    "model_comparison": "/content/final_export/model_comparison.csv"
 }
