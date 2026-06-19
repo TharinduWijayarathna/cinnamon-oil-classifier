@@ -42,6 +42,24 @@ class ModelService:
         if missing:
             raise ValueError(f"model_config.json is missing required keys: {missing}")
 
+        tabular_preprocessing = self.model_config["tabular_preprocessing"]
+        feature_names = self.model_config.get("all_features")
+        if feature_names:
+            tabular_preprocessing = {
+                **tabular_preprocessing,
+                "feature_names": feature_names,
+            }
+            self.model_config["tabular_preprocessing"] = tabular_preprocessing
+
+        expected_tabular_dim = len(tabular_preprocessing["scale_mean"])
+        model_tabular_dim = self._tabular_input_dim()
+        if model_tabular_dim is not None and model_tabular_dim != expected_tabular_dim:
+            raise ValueError(
+                "Model tabular input size "
+                f"({model_tabular_dim}) does not match model_config "
+                f"({expected_tabular_dim})."
+            )
+
     @staticmethod
     def _ensure_file(path: Path) -> None:
         if not path.exists():
@@ -95,6 +113,27 @@ class ModelService:
             if temp_model_path and os.path.exists(temp_model_path):
                 os.remove(temp_model_path)
 
+    def _tabular_input_dim(self) -> int | None:
+        if self.hybrid_model is None:
+            return None
+
+        try:
+            layer = self.hybrid_model.get_layer("tabular_input")
+        except ValueError:
+            return None
+
+        shape = getattr(layer, "shape", None)
+        if shape is None:
+            shape = getattr(layer, "batch_input_shape", None)
+        if shape and len(shape) >= 2 and shape[-1] is not None:
+            return int(shape[-1])
+
+        for model_input in self.hybrid_model.inputs:
+            if model_input.name.endswith("tabular_input"):
+                if model_input.shape[-1] is not None:
+                    return int(model_input.shape[-1])
+        return None
+
     @staticmethod
     def _remove_quantization_config_keys(value):
         if isinstance(value, dict):
@@ -136,23 +175,9 @@ class ModelService:
         )
 
         prediction = self.hybrid_model.predict([image_input, tabular_input], verbose=0)
-        prediction = np.asarray(prediction)
-
-        if prediction.ndim == 2 and prediction.shape[1] == 1:
-            raw_score = float(prediction.flatten()[0])
-            predicted_class = int(raw_score >= 0.5)
-            confidence = raw_score
-            if predicted_class == 0:
-                confidence = 1.0 - confidence
-        elif prediction.ndim == 1:
-            raw_score = float(prediction.flatten()[0])
-            predicted_class = int(raw_score >= 0.5)
-            confidence = raw_score
-            if predicted_class == 0:
-                confidence = 1.0 - confidence
-        else:
-            predicted_class = int(np.argmax(prediction[0]))
-            confidence = float(np.max(prediction[0]))
+        prediction = np.asarray(prediction).reshape(1, -1)
+        predicted_class = int(np.argmax(prediction[0]))
+        confidence = float(np.max(prediction[0]))
 
         class_names = self.model_config["class_names"]
         if predicted_class < 0 or predicted_class >= len(class_names):
@@ -165,7 +190,5 @@ class ModelService:
             "predicted_class_index": predicted_class,
             "confidence_percentage": round(confidence * 100.0, 2),
             "raw_prediction_values": prediction.tolist(),
-            "classification_type": "binary"
-            if (prediction.ndim == 1 or (prediction.ndim == 2 and prediction.shape[1] == 1))
-            else "multiclass",
+            "classification_type": "multiclass",
         }
